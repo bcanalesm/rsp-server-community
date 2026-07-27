@@ -22,5 +22,6 @@
     <module>org.jboss.tools.rsp.server.payara</module>
     <module>org.jboss.tools.rsp.server.liberty</module>
     <module>org.jboss.tools.rsp.server.folder</module>
+    <module>org.jboss.tools.rsp.server.was</module>
   </modules>
 </project>

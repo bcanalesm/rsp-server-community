@@ -1,0 +1,122 @@
+{
+  "serverTypes": {
+    "com.ibm.was.server.85": {
+      "template": "was.template",
+      "type": {
+        "name": "IBM WebSphere Application Server 8.5",
+        "description": "A server adapter capable of controlling and deploying to a WebSphere Application Server 8.5 (traditional) profile via wsadmin."
+      }
+    },
+    "com.ibm.was.server.90": {
+      "template": "was.template",
+      "type": {
+        "name": "IBM WebSphere Application Server 9.0",
+        "description": "A server adapter capable of controlling and deploying to a WebSphere Application Server 9.0 (traditional) profile via wsadmin."
+      }
+    }
+  },
+  "templates": {
+    "was.template": {
+      "type": {
+        "launchModes": "run,debug",
+        "attributes": {
+          "required": {
+            "server.home.dir": {
+              "type": "string",
+              "description": "Filesystem path to the WAS *profile* home (contains bin/startServer.sh, bin/stopServer.sh, bin/wsadmin.sh). Example: /opt/IBM/WebSphere/AppServer/profiles/AppSrv01",
+              "defaultValue": "",
+              "secret": "false"
+            },
+            "was.server.name": {
+              "type": "string",
+              "description": "The application server name inside the profile, e.g. server1",
+              "defaultValue": "server1",
+              "secret": "false"
+            }
+          },
+          "optional": {
+            "was.node.name": {
+              "type": "string",
+              "description": "Node name. Only needed to disambiguate targeting on ND cells.",
+              "defaultValue": "",
+              "secret": "false"
+            },
+            "was.cell.name": {
+              "type": "string",
+              "description": "Cell name. Informational only for this MVP; not used for Base profiles.",
+              "defaultValue": "",
+              "secret": "false"
+            },
+            "was.host": {
+              "type": "string",
+              "description": "Host wsadmin and the HTTP poller connect to.",
+              "defaultValue": "localhost",
+              "secret": "false"
+            },
+            "was.soap.port": {
+              "type": "string",
+              "description": "SOAP connector port used by wsadmin to administer this server.",
+              "defaultValue": "8880",
+              "secret": "false"
+            },
+            "was.http.port": {
+              "type": "string",
+              "description": "HTTP transport port used to poll whether the server is up.",
+              "defaultValue": "9080",
+              "secret": "false"
+            },
+            "was.admin.user": {
+              "type": "string",
+              "description": "Admin console / wsadmin user. Leave blank if administrative security is disabled.",
+              "defaultValue": "",
+              "secret": "false"
+            },
+            "was.admin.password": {
+              "type": "string",
+              "description": "Admin console / wsadmin password. Leave blank if administrative security is disabled.",
+              "defaultValue": "",
+              "secret": "true"
+            },
+            "was.wsadmin.lang": {
+              "type": "string",
+              "description": "Scripting language passed to wsadmin via -lang.",
+              "defaultValue": "jython",
+              "secret": "false"
+            },
+            "was.poll.timeout.seconds": {
+              "type": "int",
+              "description": "How many seconds to wait for the server to report up/down before giving up.",
+              "defaultValue": "120",
+              "secret": "false"
+            }
+          },
+          "staticDefaults": {
+            "args.override.boolean": {
+              "type": "boolean",
+              "value": "false"
+            }
+          }
+        },
+        "behavior": {
+          "startup": {
+            "launchType": "noOp",
+            "poller": "noOpPoller"
+          },
+          "shutdown": {
+            "launchType": "noOp",
+            "poller": "noOpPoller"
+          },
+          "actions": {
+            "showInBrowser": {
+              "baseUrl": "http://${was.host}:${was.http.port}",
+              "deploymentStrategy": "appendDeploymentNameRemoveSuffix"
+            },
+            "editServerConfiguration": {
+              "paths": "config/cells/"
+            }
+          }
+        }
+      }
+    }
+  }
+}

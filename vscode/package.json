@@ -1,17 +1,18 @@
 {
-  "name": "vscode-community-server-connector",
-  "displayName": "Community Server Connectors",
-  "description": "Connects vscode with open source community-driven servers and runtimes.",
-  "version": "0.26.21",
+  "name": "was-server-connector",
+  "displayName": "WebSphere Application Server Connector",
+  "description": "Manage IBM WebSphere Application Server (traditional) 8.5/9.0 directly from VS Code - create servers, start/stop, and deploy WAR/EAR files via wsadmin. Built on the open source rsp-server-community project (Tomcat, GlassFish, WebSphere Liberty, and more). By nicadevs.com.",
+  "version": "0.1.0",
   "license": "SEE LICENSE IN LICENSE",
-  "publisher": "redhat",
-  "author": "Red Hat",
+  "publisher": "byroncanales",
+  "author": "Byron Canales",
   "preview": true,
+  "homepage": "https://nicadevs.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/redhat-developer/rsp-server-community.git"
+    "url": "https://github.com/bcanalesm/rsp-server-community.git"
   },
-  "bugs": "https://github.com/redhat-developer/rsp-server-community.git",
+  "bugs": "https://github.com/bcanalesm/rsp-server-community/issues",
   "engines": {
     "vscode": "^1.77.0"
   },
@@ -43,9 +44,11 @@
   "keywords": [
     "server",
     "runtimes",
-    "adapters"
+    "adapters",
+    "websphere",
+    "was"
   ],
-  "icon": "images/community.png",
+  "icon": "images/nicadevs-was.png",
   "main": "./out/src/extension",
   "scripts": {
     "package": "node ./build/package.js",
