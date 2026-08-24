@@ -13,6 +13,9 @@ import org.jboss.tools.rsp.server.ServerCoreActivator;
 import org.jboss.tools.rsp.server.generic.GenericServerActivator;
 import org.jboss.tools.rsp.server.generic.IServerBehaviorFromJSONProvider;
 import org.jboss.tools.rsp.server.generic.IServerBehaviorProvider;
+import org.jboss.tools.rsp.server.spi.discovery.IServerBeanTypeProvider;
+import org.jboss.tools.rsp.server.spi.discovery.ServerBeanType;
+import org.jboss.tools.rsp.server.spi.model.IServerManagementModel;
 import org.jboss.tools.rsp.server.spi.servertype.IServer;
 import org.jboss.tools.rsp.server.spi.servertype.IServerDelegate;
 import org.jboss.tools.rsp.server.was.servertype.impl.IWASServerAttributes;
@@ -24,6 +27,9 @@ public class Activator extends GenericServerActivator {
 	public static final String BUNDLE_ID = "org.jboss.tools.rsp.server.was";
 	private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
+	private final IServerBeanTypeProvider beanTypeProvider =
+			() -> new ServerBeanType[] { new WASServerBeanType() };
+
 	@Override
 	public void start(BundleContext context) throws Exception {
 		LOG.info("Bundle {} starting...", context.getBundle().getSymbolicName());
@@ -34,6 +40,18 @@ public class Activator extends GenericServerActivator {
 	public void stop(BundleContext context) throws Exception {
 		LOG.info("Bundle {} stopping...", context.getBundle().getSymbolicName());
 		removeExtensions(ServerCoreActivator.BUNDLE_ID, context);
+	}
+
+	@Override
+	public void addExtensions(IServerManagementModel rspModel) {
+		super.addExtensions(rspModel);
+		rspModel.getServerBeanTypeManager().addTypeProvider(beanTypeProvider);
+	}
+
+	@Override
+	public void removeExtensions(IServerManagementModel rspModel) {
+		rspModel.getServerBeanTypeManager().removeTypeProvider(beanTypeProvider);
+		super.removeExtensions(rspModel);
 	}
 
 	@Override

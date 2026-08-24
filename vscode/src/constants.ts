@@ -10,7 +10,7 @@ import { FelixRspLauncherOptions } from "./impl/server";
 /**
  * RSP Provider ID
  */
-const RSP_PROVIDER_ID = 'redhat.vscode-community-server-connector';
+const RSP_PROVIDER_ID = 'byroncanales.was-server-connector';
 
 /**
  * RSP Provider Name - it will be displayed in the tree node
