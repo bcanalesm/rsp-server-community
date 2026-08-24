@@ -1,43 +1,45 @@
-# Runtime Server Protocol - Community Extension
+# WebSphere Application Server Connector
 
-
-[![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/redhat.vscode-community-server-connector?style=for-the-badge&label=VS%20Marketplace&logo=visual-studio-code&color=blue)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-community-server-connector)
-[![Downloads](https://img.shields.io/visual-studio-marketplace/d/redhat.vscode-community-server-connector?style=for-the-badge&color=purple)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-community-server-connector)
-[![Gitter](https://img.shields.io/gitter/room/redhat-developer/server-connector?style=for-the-badge&logo=gitter)](https://gitter.im/redhat-developer/server-connector)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/redhat-developer/rsp-server-community/actions.yml?style=for-the-badge&logo=github)](https://github.com/redhat-developer/rsp-server-community/actions)
-[![License](https://img.shields.io/badge/license-EPLv2.0-brightgreen.png?style=for-the-badge)](https://github.com/redhat-developer/rsp-server-community/blob/master/vscode/LICENSE)
+[![License](https://img.shields.io/badge/license-EPLv2.0-brightgreen.png?style=for-the-badge)](https://github.com/bcanalesm/rsp-server-community/blob/master/vscode/LICENSE)
 
 ## Summary
 
-This VSCode Extension provides a Runtime Server Protocol based server connector, which can start, stop, publish to, and otherwise control Community runtimes and servers like Apache Felix, Karaf, and Tomcat.
+Manage an existing **IBM WebSphere Application Server (traditional) 8.5 or 9.0** installation directly from VS Code: create a server pointing at a local profile, start/stop it, and deploy `.war`/`.ear` files to it via `wsadmin`.
 
+This extension is built on the open source [rsp-server-community](https://github.com/redhat-developer/rsp-server-community) project (Runtime Server Protocol), and depends on the [RSP UI extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-rsp-ui), which is installed automatically and provides the Servers view and its commands.
+
+By [nicadevs.com](https://nicadevs.com).
+
+## Requirements
+
+- An existing WAS 8.5 or 9.0 (traditional) installation and profile on the machine VS Code runs on. This extension does **not** download or install WAS - IBM's license doesn't allow that; you point it at a profile you already have.
+- The profile's SOAP connector reachable from VS Code (`wsadmin` is invoked against it), and administrative security credentials if the profile has them enabled.
+
+## Adding a server
+
+Use the Servers view's **"+"** action and choose **"No, use server on disk"**, then browse to the WAS *profile* home (the folder containing `bin/startServer.sh`/`.bat`, `bin/wsadmin.sh`/`.bat`, and `properties/version/profile.version`). The extension reads the profile's real version to register it as WAS 8.5 or 9.0 automatically.
+
+## Server parameters
+
+Right-click a server → **Edit Server** to change these:
+
+| Parameter | Required | Description |
+|---|---|---|
+| `server.home.dir` | yes | Path to the WAS *profile* home |
+| `was.server.name` | yes | Application server name inside the profile (default `server1`) |
+| `was.node.name` | no | Node name; only needed to disambiguate targeting on ND cells |
+| `was.cell.name` | no | Cell name; informational only |
+| `was.host` | no | Host `wsadmin` and the HTTP poller connect to (default `localhost`) |
+| `was.soap.port` | no | SOAP connector port used by `wsadmin` (default `8880`) |
+| `was.http.port` | no | HTTP transport port polled to detect the server is up (default `9080`) |
+| `was.admin.user` / `was.admin.password` | no | Only needed if administrative security is enabled |
+| `was.wsadmin.lang` | no | Scripting language passed to `wsadmin -lang` (default `jython`) |
+| `was.poll.timeout.seconds` | no | Seconds to wait for start/stop before giving up (default `120`) |
+
+## Deploying
+
+Add a `.war` or `.ear` as a deployable on the server, then Publish. The application name inside WAS defaults to the file name (without extension); you can override it via the deployment option shown when adding the deployable.
 
 ## Commands and features
 
-[![ screencast ](https://img.youtube.com/vi/8JIcEzoPhlE/hqdefault.jpg)](https://youtu.be/8JIcEzoPhlE)
-
-This extension depends on VSCode RSP UI Extension which is going to be installed automatically along with VSCode Community Server Connector Extension. RSP UI in conjuction with Community Server Connector Extension supports a number of commands for interacting with supported server adapters; these are accessible via the command menu (`Cmd+Shift+P` on macOS or `Ctrl+Shift+P` on Windows and Linux) and may be bound to keys in the normal way.
-
-
-### Available Commands
-   This extension provides no additional commands other than those available in [rsp-ui](https://github.com/redhat-developer/vscode-rsp-ui#available-commands)
-
-## Extension Settings
-   This extension provides no additional settings other than those available in [rsp-ui](https://github.com/redhat-developer/vscode-rsp-ui#extension-settings)
-
-## Server Parameters
-   To change Server Parameters, right-click on the server you want to edit and select `Edit Server`
-
-### Additional Server Parameters
-   This extension supports the server parameters available in [rsp-ui](https://github.com/redhat-developer/vscode-rsp-ui#server-parameters). This extension also support the following server parameters. 
-
-   * `"server.classpath.additions"` - a list of semicolon-separated paths to add to the launch classpath (Java-based servers only)
-
-### Supported Servers
-   * Apache Tomcat [ 5.5 | 6.0 | 7.0 | 8.0 | 8.5 | 9.0 ]
-   * Apache Karaf [ 4.8 ] 
-   * Apache Felix [ 3.2 | 4.6 | 5.6 | 6.0 ]
-   * Jetty [ 9.x ]
-   * Glassfish [ 5.x ]
-   * Websphere Liberty [ 21.x ]
-
+This extension provides no additional commands beyond those available in [rsp-ui](https://github.com/redhat-developer/vscode-rsp-ui#available-commands); the Servers view, start/stop, and publish actions all come from there.

@@ -4,7 +4,7 @@
   "description": "Manage IBM WebSphere Application Server (traditional) 8.5/9.0 directly from VS Code - create servers, start/stop, and deploy WAR/EAR files via wsadmin. Built on the open source rsp-server-community project (Tomcat, GlassFish, WebSphere Liberty, and more). By nicadevs.com.",
   "version": "0.1.0",
   "license": "SEE LICENSE IN LICENSE",
-  "publisher": "byroncanales",
+  "publisher": "lordByron",
   "author": "Byron Canales",
   "preview": true,
   "homepage": "https://nicadevs.com",
