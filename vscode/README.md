@@ -35,10 +35,19 @@ Right-click a server → **Edit Server** to change these:
 | `was.admin.user` / `was.admin.password` | no | Only needed if administrative security is enabled |
 | `was.wsadmin.lang` | no | Scripting language passed to `wsadmin -lang` (default `jython`) |
 | `was.poll.timeout.seconds` | no | Seconds to wait for start/stop before giving up (default `120`) |
+| `was.debug.port` | no | JDWP port the server's JVM listens on when started in **Debug** mode (default `7777`) |
 
 ## Deploying
 
 Add a `.war` or `.ear` as a deployable on the server, then Publish. The application name inside WAS defaults to the file name (without extension); you can override it via the deployment option shown when adding the deployable.
+
+For multiple related deployables (e.g. several WARs that make up one application), add each one once - they stay associated with the server. From then on, right-click the **server** itself (not each deployable) and choose **Full Publish** to push whatever's currently built for all of them in one action.
+
+Right-click a `.war`/`.ear` file in the Explorer and choose **Run on Server** or **Debug on Server** to add + publish + start (or restart) it in a single step.
+
+## Remote debugging
+
+Right-click the server → **Debug** (instead of Start) to launch it with the JDWP debug agent enabled on `was.debug.port`. The extension configures the JVM's debug settings via `wsadmin` before launch, then starts the server; once the debug agent reports it's listening, VS Code's Java debugger attaches automatically (`Debug (Remote)` in the Run and Debug view) - set breakpoints in your servlet/EJB source beforehand.
 
 ## Commands and features
 

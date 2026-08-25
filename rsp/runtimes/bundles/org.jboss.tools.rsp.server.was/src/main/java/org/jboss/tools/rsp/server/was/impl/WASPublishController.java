@@ -192,14 +192,7 @@ public class WASPublishController implements IPublishControllerWithOptions {
 	}
 
 	private WsadminRunner createRunner() {
-		String profileHome = server.getAttribute(IWASServerAttributes.WAS_PROFILE_HOME, (String) null);
-		String host = server.getAttribute(IWASServerAttributes.WAS_HOST, "localhost");
-		String soapPort = server.getAttribute(IWASServerAttributes.WAS_SOAP_PORT, "8880");
-		String user = server.getAttribute(IWASServerAttributes.WAS_ADMIN_USER, "");
-		String password = server.getAttribute(IWASServerAttributes.WAS_ADMIN_PASSWORD, "");
-		String lang = server.getAttribute(IWASServerAttributes.WAS_WSADMIN_LANG, "jython");
-		return new WsadminRunner(profileHome, host, soapPort,
-				user.isEmpty() ? null : user, password, lang);
+		return WsadminRunner.forServer(server);
 	}
 
 	private String getAppName(DeployableReference ref) {

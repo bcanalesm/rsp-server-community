@@ -55,4 +55,7 @@ public interface IWASServerAttributes extends DefaultServerAttributes {
 
 	/** Optional. Number of seconds to wait for the server to report up/down before giving up. */
 	public static final String WAS_POLL_TIMEOUT_SECONDS = "was.poll.timeout.seconds";
+
+	/** Optional. JDWP port the server's JVM listens on when started in "debug" mode. Defaults to 7777. */
+	public static final String WAS_DEBUG_PORT = "was.debug.port";
 }

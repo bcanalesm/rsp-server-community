@@ -88,6 +88,12 @@
               "description": "How many seconds to wait for the server to report up/down before giving up.",
               "defaultValue": "120",
               "secret": "false"
+            },
+            "was.debug.port": {
+              "type": "string",
+              "description": "JDWP port the server's JVM listens on when started in \"debug\" mode.",
+              "defaultValue": "7777",
+              "secret": "false"
             }
           },
           "staticDefaults": {

@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.tools.rsp.server.spi.servertype.IServer;
+import org.jboss.tools.rsp.server.was.servertype.impl.IWASServerAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,17 @@ public class WsadminRunner {
 		this.lang = (lang == null || lang.isEmpty()) ? "jython" : lang;
 	}
 
+	public static WsadminRunner forServer(IServer server) {
+		String profileHome = server.getAttribute(IWASServerAttributes.WAS_PROFILE_HOME, (String) null);
+		String host = server.getAttribute(IWASServerAttributes.WAS_HOST, "localhost");
+		String soapPort = server.getAttribute(IWASServerAttributes.WAS_SOAP_PORT, "8880");
+		String user = server.getAttribute(IWASServerAttributes.WAS_ADMIN_USER, "");
+		String password = server.getAttribute(IWASServerAttributes.WAS_ADMIN_PASSWORD, "");
+		String lang = server.getAttribute(IWASServerAttributes.WAS_WSADMIN_LANG, "jython");
+		return new WsadminRunner(profileHome, host, soapPort,
+				user.isEmpty() ? null : user, password, lang);
+	}
+
 	public static class WsadminResult {
 		public final boolean success;
 		public final String output;
@@ -84,9 +97,6 @@ public class WsadminRunner {
 					+ " - check the profile home (server.home.dir) attribute", -1);
 		}
 
-		File scriptFile = Files.createTempFile("was-rsp-adapter-", ".py").toFile();
-		Files.write(scriptFile.toPath(), jythonScript.getBytes(StandardCharsets.UTF_8));
-
 		List<String> cmd = new ArrayList<>();
 		cmd.add(wsadmin.getAbsolutePath());
 		cmd.add("-lang");
@@ -107,6 +117,38 @@ public class WsadminRunner {
 			cmd.add("-password");
 			cmd.add(adminPassword == null ? "" : adminPassword);
 		}
+		return execute(cmd, jythonScript);
+	}
+
+	/**
+	 * Runs the given Jython snippet through wsadmin with no admin connection at
+	 * all, so it operates directly on the profile's local config files. Needed
+	 * to edit JVM settings (e.g. enabling the JDWP debug agent) while the server
+	 * is stopped and there is no SOAP admin service to connect to yet.
+	 */
+	public WsadminResult runLocalScript(String jythonScript) throws IOException, InterruptedException {
+		File wsadmin = resolveWsadminExecutable();
+		if (!wsadmin.isFile()) {
+			return new WsadminResult(false,
+					"wsadmin executable not found at " + wsadmin.getAbsolutePath()
+					+ " - check the profile home (server.home.dir) attribute", -1);
+		}
+
+		List<String> cmd = new ArrayList<>();
+		cmd.add(wsadmin.getAbsolutePath());
+		cmd.add("-lang");
+		cmd.add(lang);
+		cmd.add("-conntype");
+		cmd.add("NONE");
+		return execute(cmd, jythonScript);
+	}
+
+	private WsadminResult execute(List<String> baseCmd, String jythonScript)
+			throws IOException, InterruptedException {
+		File scriptFile = Files.createTempFile("was-rsp-adapter-", ".py").toFile();
+		Files.write(scriptFile.toPath(), jythonScript.getBytes(StandardCharsets.UTF_8));
+
+		List<String> cmd = new ArrayList<>(baseCmd);
 		cmd.add("-f");
 		cmd.add(scriptFile.getAbsolutePath());
 
