@@ -2,7 +2,7 @@
   "name": "was-server-connector",
   "displayName": "WebSphere Application Server Connector",
   "description": "Manage IBM WebSphere Application Server (traditional) 8.5/9.0 directly from VS Code - create servers, start/stop, and deploy WAR/EAR files via wsadmin. Built on the open source rsp-server-community project (Tomcat, GlassFish, WebSphere Liberty, and more). By nicadevs.com.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "SEE LICENSE IN LICENSE",
   "publisher": "lordByron",
   "author": "Byron Canales",
@@ -36,6 +36,10 @@
     "onCommand:server.publishFull",
     "onCommand:server.publishIncremental",
     "onCommand:server.actions",
+    "onCommand:was.buildAndRun",
+    "onCommand:was.buildAndDebug",
+    "onCommand:was.showServerProperties",
+    "onCommand:was.openAdminConsole",
     "onView:servers"
   ],
   "categories": [
@@ -50,6 +54,56 @@
   ],
   "icon": "images/nicadevs-was.png",
   "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "was.buildAndRun",
+        "title": "WAS: Build & Run on Server",
+        "category": "WAS"
+      },
+      {
+        "command": "was.buildAndDebug",
+        "title": "WAS: Build & Debug on Server",
+        "category": "WAS"
+      },
+      {
+        "command": "was.showServerProperties",
+        "title": "WAS: Show Server Properties",
+        "category": "WAS"
+      },
+      {
+        "command": "was.openAdminConsole",
+        "title": "WAS: Open Admin Console",
+        "category": "WAS"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "was.buildAndRun",
+          "when": "explorerResourceIsFolder",
+          "group": "1_server-application@3"
+        },
+        {
+          "command": "was.buildAndDebug",
+          "when": "explorerResourceIsFolder",
+          "group": "1_server-application@4"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "was.showServerProperties",
+          "when": "view == servers && viewItem =~ /^(Starting|Started|Debugging|Stopping|Stopped)/",
+          "group": "0_was-server-info@1"
+        },
+        {
+          "command": "was.openAdminConsole",
+          "when": "view == servers && viewItem =~ /^(Starting|Started|Debugging|Stopping|Stopped)/",
+          "group": "0_was-server-info@2"
+        }
+      ]
+    }
+  },
   "scripts": {
     "package": "node ./build/package.js",
     "vscode:prepublish": "npm run compile",

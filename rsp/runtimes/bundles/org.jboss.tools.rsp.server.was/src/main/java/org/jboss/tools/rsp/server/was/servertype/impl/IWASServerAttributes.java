@@ -58,4 +58,7 @@ public interface IWASServerAttributes extends DefaultServerAttributes {
 
 	/** Optional. JDWP port the server's JVM listens on when started in "debug" mode. Defaults to 7777. */
 	public static final String WAS_DEBUG_PORT = "was.debug.port";
+
+	/** Optional. HTTP port of the WAS admin console. Defaults to 9060 (Base/ND default). */
+	public static final String WAS_ADMIN_CONSOLE_PORT = "was.admin.console.port";
 }

@@ -9,6 +9,8 @@ import { API, retrieveUIExtension, RSPController, RSPServer, ServerState } from 
 import { FelixRspLauncherOptions } from './server';
 import { IRecommendationService, RecommendationCore } from '@redhat-developer/vscode-extension-proposals/lib';
 import { getTelemetryServiceInstance, initializeTelemetry } from './telemetry';
+import { registerBuildAndDeployCommands } from './buildAndDeploy';
+import { registerServerInfoCommands } from './serverInfo';
 
 export const JAVA_DEBUG_EXTENSION: string = 'vscjava.vscode-java-debug';
 export const JAVA_EXTENSION: string = 'redhat.java';
@@ -30,6 +32,8 @@ export async function activateImpl(context: vscode.ExtensionContext,
         serverConnectorUI.api.registerRSPProvider(rsp);
     }
     registerRecommendations(context);
+    registerBuildAndDeployCommands(context, api);
+    registerServerInfoCommands(context);
     return api;
 }
 

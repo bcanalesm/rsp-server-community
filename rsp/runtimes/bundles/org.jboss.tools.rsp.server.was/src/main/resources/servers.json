@@ -94,6 +94,12 @@
               "description": "JDWP port the server's JVM listens on when started in \"debug\" mode.",
               "defaultValue": "7777",
               "secret": "false"
+            },
+            "was.admin.console.port": {
+              "type": "string",
+              "description": "HTTP port of the WAS admin console (used by the \"Open Admin Console\" action).",
+              "defaultValue": "9060",
+              "secret": "false"
             }
           },
           "staticDefaults": {

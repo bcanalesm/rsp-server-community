@@ -36,19 +36,31 @@ Right-click a server → **Edit Server** to change these:
 | `was.wsadmin.lang` | no | Scripting language passed to `wsadmin -lang` (default `jython`) |
 | `was.poll.timeout.seconds` | no | Seconds to wait for start/stop before giving up (default `120`) |
 | `was.debug.port` | no | JDWP port the server's JVM listens on when started in **Debug** mode (default `7777`) |
+| `was.admin.console.port` | no | HTTP port of the WAS admin console, used by **WAS: Open Admin Console** (default `9060`) |
 
 ## Deploying
 
-Add a `.war` or `.ear` as a deployable on the server, then Publish. The application name inside WAS defaults to the file name (without extension); you can override it via the deployment option shown when adding the deployable.
+Add a `.war` or `.ear` as a deployable on the server, then Publish. The application name inside WAS defaults to the file name (without extension); you can override it via the deployment option shown when adding the deployable. Publish output (the real `wsadmin`/`AdminApp` log, not just a "started" toast) streams live into the server's own Output channel (`Server: <name>`) as it happens.
 
 For multiple related deployables (e.g. several WARs that make up one application), add each one once - they stay associated with the server. From then on, right-click the **server** itself (not each deployable) and choose **Full Publish** to push whatever's currently built for all of them in one action.
 
 Right-click a `.war`/`.ear` file in the Explorer and choose **Run on Server** or **Debug on Server** to add + publish + start (or restart) it in a single step.
 
+## Building a project from source
+
+If what you're working on is a Maven project (a `pom.xml` producing a `.war`/`.ear`) rather than an already-built artifact, right-click the **project folder** in the Explorer and choose **WAS: Build & Run on Server** or **WAS: Build & Debug on Server**. This runs `mvn clean package`, finds the resulting `.ear` (or `.war`) under `target/`, and deploys + starts (or restarts) it - re-run the same command after editing code to push an updated build. Unlike rsp-ui's own "Run on Server"/"Debug on Server", this never prompts you to pick a server when there's only one configured.
+
 ## Remote debugging
 
-Right-click the server → **Debug** (instead of Start) to launch it with the JDWP debug agent enabled on `was.debug.port`. The extension configures the JVM's debug settings via `wsadmin` before launch, then starts the server; once the debug agent reports it's listening, VS Code's Java debugger attaches automatically (`Debug (Remote)` in the Run and Debug view) - set breakpoints in your servlet/EJB source beforehand.
+Right-click the server → **Debug** (instead of Start), or use **WAS: Build & Debug on Server** above, to launch it with the JDWP debug agent enabled on `was.debug.port`. The extension configures the JVM's debug settings via `wsadmin` before launch, then starts the server; once the debug agent reports it's listening, VS Code's Java debugger attaches automatically (`Debug (Remote)` in the Run and Debug view) - set breakpoints in your servlet/EJB source beforehand.
 
-## Commands and features
+Once attached, editing the body of an existing method and saving hot-swaps it into the running JVM immediately - no rebuild/redeploy needed. Structural changes (new methods/fields/classes, changed signatures) do need a fresh **Build & Debug on Server**.
 
-This extension provides no additional commands beyond those available in [rsp-ui](https://github.com/redhat-developer/vscode-rsp-ui#available-commands); the Servers view, start/stop, and publish actions all come from there.
+## Commands
+
+Right-click a server in the Servers view for two more WAS-specific actions:
+
+- **WAS: Show Server Properties** - opens the server's underlying config file for a quick look at every attribute.
+- **WAS: Open Admin Console** - opens `http://<was.host>:<was.admin.console.port>/ibm/console` in your default browser.
+
+Everything else (the Servers view itself, start/stop, and publish actions) comes from [rsp-ui](https://github.com/redhat-developer/vscode-rsp-ui#available-commands).

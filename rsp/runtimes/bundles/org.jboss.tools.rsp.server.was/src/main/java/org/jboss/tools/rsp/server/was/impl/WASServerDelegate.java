@@ -23,7 +23,6 @@ import org.jboss.tools.rsp.api.dao.StartServerResponse;
 import org.jboss.tools.rsp.eclipse.core.runtime.IStatus;
 import org.jboss.tools.rsp.eclipse.core.runtime.Status;
 import org.jboss.tools.rsp.launching.memento.JSONMemento;
-import org.jboss.tools.rsp.server.LauncherSingleton;
 import org.jboss.tools.rsp.server.generic.IPublishControllerWithOptions;
 import org.jboss.tools.rsp.server.generic.servertype.GenericServerBehavior;
 import org.jboss.tools.rsp.server.spi.servertype.IServer;
@@ -274,24 +273,14 @@ public class WASServerDelegate extends GenericServerBehavior implements IServerD
 			String line;
 			while ((line = r.readLine()) != null) {
 				LOG.info("[{}] {}", processId, line);
-				// Relayed to the client so its "Listening for transport dt_socket" watcher
-				// (used to auto-attach a Java debugger once "debug" mode is started) can see it -
-				// this delegate uses its own ProcessBuilder instead of the framework's
-				// generic java-launch mechanism, so nothing else forwards this output.
-				fireServerStreamAppended(processId, line);
+				// Relayed to the client (VS Code's Output channel among others) so its
+				// "Listening for transport dt_socket" watcher (used to auto-attach a Java
+				// debugger once "debug" mode is started) can see it, and so the user can
+				// actually watch what's happening instead of only the bundle's log file.
+				RspOutputRelay.appendLine(getServer(), processId, line);
 			}
 		} catch (IOException e) {
 			// Process ended, pipe closed - nothing to do.
-		}
-	}
-
-	private void fireServerStreamAppended(String processId, String line) {
-		try {
-			LauncherSingleton.getDefault().getLauncher().getModel().getServerModel()
-					.fireServerStreamAppended(getServer(), processId,
-							ServerManagementAPIConstants.STREAM_TYPE_SYSOUT, line + System.lineSeparator());
-		} catch (Exception e) {
-			LOG.debug("Could not relay process output to clients", e);
 		}
 	}
 

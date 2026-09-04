@@ -157,6 +157,7 @@ public class WASPublishController implements IPublishControllerWithOptions {
 			result = runner.runScript(script);
 		}
 		LOG.info("wsadmin install/update output for {}:\n{}", appName, result.output);
+		relayOutput(result.output);
 		if (!result.success) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.BUNDLE_ID,
 					"wsadmin failed to install/update " + appName + " (exit " + result.exitCode + "). See log for details."));
@@ -184,6 +185,7 @@ public class WASPublishController implements IPublishControllerWithOptions {
 			result = runner.runScript(script);
 		}
 		LOG.info("wsadmin uninstall output for {}:\n{}", appName, result.output);
+		relayOutput(result.output);
 		if (!result.success) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.BUNDLE_ID,
 					"wsadmin failed to uninstall " + appName + " (exit " + result.exitCode + "). See log for details."));
@@ -193,6 +195,13 @@ public class WASPublishController implements IPublishControllerWithOptions {
 
 	private WsadminRunner createRunner() {
 		return WsadminRunner.forServer(server);
+	}
+
+	/** Line-by-line so it appears in the VS Code Output channel as it happened, not as one block at the end. */
+	private void relayOutput(String output) {
+		for (String line : output.split("\\r?\\n")) {
+			RspOutputRelay.appendLine(server, "publish", line);
+		}
 	}
 
 	private String getAppName(DeployableReference ref) {
