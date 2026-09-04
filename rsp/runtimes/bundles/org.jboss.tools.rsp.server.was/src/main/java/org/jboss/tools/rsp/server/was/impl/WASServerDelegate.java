@@ -120,7 +120,7 @@ public class WASServerDelegate extends GenericServerBehavior implements IServerD
 					String line;
 					while ((line = raf.readLine()) != null) {
 						if (line.contains("Listening for transport dt_socket")) {
-							fireServerStreamAppended("startServer", line);
+							RspOutputRelay.appendLine(getServer(), "startServer", line);
 							return;
 						}
 					}
